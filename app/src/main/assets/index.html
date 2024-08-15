@@ -37,13 +37,15 @@
                   const currentTime = new Date().getTime() / 1000
                   const videoDuration = chip.duration || 1
                   chip.currentTime = (currentTime % videoDuration)
-                  display.innerHTML = currentTime
+                  display.innerHTML = "L:"+currentTime
                   setTimeout(syncVideoFromAPI,30000)
                }
                function syncVideoFromAPI() {
-                  fetch('https://worldtimeapi.org/api/timezone/America/New_York')
+                  if (window.navigator.onLine) {
+                     display.innerHTML = "Syncing..."
+                     fetch('https://worldtimeapi.org/api/timezone/America/New_York')
                      .then(response => response.json())
-                     .then(data => {
+                        .then(data => {
                            const currentTime = new Date(data.datetime).getTime() / 1000
                            const videoDuration = chip.duration || 1
                            chip.currentTime = (currentTime % videoDuration)
@@ -51,8 +53,21 @@
                            setTimeout(syncVideoFromAPI,30000)
                         })
                      .catch(error => {
-                           syncVideoFromEDT()
+                        syncVideoFromEDT()
                      });
+                     if (chip.paused || chip.ended) {
+                        console.log("chip should not stop!")
+                        chip.play()
+                     }
+                  } else {
+                     syncVideoFromEDT()
+                  }
+               }
+               display.onclick = function(){
+                  display.style.display = "none"
+               }
+               chip.onpause = function(){
+                  chip.play()
                }
                chip.play()
                syncVideoFromAPI()
@@ -75,6 +90,9 @@
             margin: 0;
             padding: 0;
             overflow: hidden;
+            -webkit-user-select: none; /* Safari */
+            -ms-user-select: none; /* IE 10 and IE 11 */
+            user-select: none; /* Standard syntax */
          }
          video {
             display: block;

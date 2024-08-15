@@ -29,6 +29,7 @@ public class MainActivity extends Activity {
         webSettings.setDomStorageEnabled(false);
         webSettings.setSupportZoom(false);
         webSettings.setMediaPlaybackRequiresUserGesture(false);
+        webSettings.setAppCacheEnabled(false);
         mWebView.setWebViewClient(new WebViewClientExtras());
         mWebView.loadUrl("file:///android_asset/index.html");
     }
